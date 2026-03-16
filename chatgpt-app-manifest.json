@@ -1,0 +1,118 @@
+{
+  "schema_version": "1.0",
+  "app": {
+    "name": "AI Work OS",
+    "description": "AI Work Operating System with workflow orchestration, task tracking, and results visualization powered by a remote MCP server.",
+    "version": "0.1.0"
+  },
+  "mcp": {
+    "server_label": "aiworkos",
+    "server_url": "https://your-domain.example.com/mcp",
+    "transport": "streamable_http",
+    "authentication": {
+      "type": "none"
+    },
+    "capabilities": {
+      "tool_invocation": true,
+      "agent_handoffs": true
+    }
+  },
+  "widgets": [
+    {
+      "id": "task_dashboard",
+      "type": "widget",
+      "title": "Task Dashboard",
+      "description": "Displays workflow tasks, owners, and live status.",
+      "source": {
+        "type": "iframe",
+        "url": "https://your-domain.example.com/widgets/task-dashboard"
+      },
+      "props": {
+        "refresh_interval_seconds": 10,
+        "supports_task_selection": true
+      }
+    },
+    {
+      "id": "workflow_viewer",
+      "type": "widget",
+      "title": "Workflow Viewer",
+      "description": "Shows workflow stages, dependencies, and execution progress.",
+      "source": {
+        "type": "iframe",
+        "url": "https://your-domain.example.com/widgets/workflow-viewer"
+      },
+      "props": {
+        "supports_dependency_graph": true,
+        "supports_parallel_execution_view": true
+      }
+    },
+    {
+      "id": "results_viewer",
+      "type": "widget",
+      "title": "Results Viewer",
+      "description": "Renders structured task outputs, campaign assets, and final summaries.",
+      "source": {
+        "type": "iframe",
+        "url": "https://your-domain.example.com/widgets/results-viewer"
+      },
+      "props": {
+        "supports_json_results": true,
+        "supports_export": true
+      }
+    }
+  ],
+  "tools": [
+    {
+      "name": "create_workflow",
+      "enabled": true,
+      "description": "Create a new workflow in the AI Work Operating System."
+    },
+    {
+      "name": "create_task",
+      "enabled": true,
+      "description": "Create and assign a structured task within a workflow."
+    },
+    {
+      "name": "run_research",
+      "enabled": true,
+      "description": "Run research tasks using the research agent."
+    },
+    {
+      "name": "generate_marketing_plan",
+      "enabled": true,
+      "description": "Generate a structured marketing campaign plan."
+    },
+    {
+      "name": "generate_social_media_posts",
+      "enabled": true,
+      "description": "Generate social media posts for a campaign."
+    },
+    {
+      "name": "generate_landing_page",
+      "enabled": true,
+      "description": "Generate a landing page specification and content."
+    },
+    {
+      "name": "complete_task",
+      "enabled": true,
+      "description": "Mark a task as completed and attach structured results."
+    }
+  ],
+  "agent_access": {
+    "allow_tool_calls": true,
+    "allowed_tools": [
+      "create_workflow",
+      "create_task",
+      "run_research",
+      "generate_marketing_plan",
+      "generate_social_media_posts",
+      "generate_landing_page",
+      "complete_task"
+    ]
+  },
+  "entrypoints": {
+    "default_widget": "task_dashboard",
+    "workflow_widget": "workflow_viewer",
+    "results_widget": "results_viewer"
+  }
+}
