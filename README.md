@@ -1,4 +1,8 @@
-# AI Work OS Backend
+# AiWorkOS
+
+The place where work gets done inside ChatGPT.
+
+## Backend
 
 Async Python backend for an AI Work Operating System built with FastAPI, the OpenAI Agents SDK, and an MCP server for reusable tools.
 
