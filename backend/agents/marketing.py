@@ -18,10 +18,28 @@ class MarketingAgentInput(BaseModel):
 
 class MarketingCampaignPlan(BaseModel):
     marketing_strategy: list[str]
-    ad_copy: list[dict[str, str]]
-    social_media_posts: list[dict[str, str]]
-    email_campaign: list[dict[str, str]]
+    ad_copy: list["AdCopyItem"]
+    social_media_posts: list["SocialMediaPostItem"]
+    email_campaign: list["EmailCampaignItem"]
     campaign_summary: str
+
+
+class AdCopyItem(BaseModel):
+    channel: str
+    headline: str
+    body: str
+
+
+class SocialMediaPostItem(BaseModel):
+    platform: str
+    post: str
+    cta: str
+
+
+class EmailCampaignItem(BaseModel):
+    subject: str
+    body: str
+    goal: str
 
 
 def build_marketing_agent(settings: Settings) -> Agent:

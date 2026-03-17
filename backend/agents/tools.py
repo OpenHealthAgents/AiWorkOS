@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 from datetime import UTC, datetime
-from typing import Any
 
 from agents import function_tool
 
@@ -28,11 +27,11 @@ async def generate_code_scaffold(service_name: str, language: str = "python") ->
 
 
 @function_tool
-async def record_decision(decision: str, metadata: dict[str, Any] | None = None) -> str:
+async def record_decision(decision: str, metadata_json: str | None = None) -> str:
     """Persistable decision log payload for audit trails."""
     payload = {
         "decision": decision,
-        "metadata": metadata or {},
+        "metadata_json": metadata_json or "{}",
         "timestamp": datetime.now(UTC).isoformat(),
     }
     return json.dumps(payload)

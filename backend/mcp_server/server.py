@@ -5,8 +5,9 @@ from typing import Any
 
 from fastapi import FastAPI, HTTPException
 from mcp.server.fastmcp import FastMCP
+from mcp.server.transport_security import TransportSecuritySettings
 
-from backend.config import get_settings
+from backend.config import Settings, get_settings
 
 from .schemas import (
     CompleteTaskInput,
@@ -25,8 +26,14 @@ def _translate_not_found(exc: KeyError) -> HTTPException:
     return HTTPException(status_code=404, detail=str(exc))
 
 
-def create_mcp_server(service: MCPToolService) -> FastMCP:
-    mcp = FastMCP(name="aiworkos-mcp")
+def create_mcp_server(service: MCPToolService, settings: Settings) -> FastMCP:
+    mcp = FastMCP(
+        name="aiworkos-mcp",
+        streamable_http_path="/",
+        transport_security=TransportSecuritySettings(
+            enable_dns_rebinding_protection=not settings.mcp_disable_dns_rebinding_protection,
+        ),
+    )
 
     @mcp.tool()
     async def create_workflow(goal: str, context: dict[str, Any] | None = None) -> dict:
@@ -130,14 +137,18 @@ def create_mcp_server(service: MCPToolService) -> FastMCP:
     return mcp
 
 
-def create_fastapi_app(service: MCPToolService) -> FastAPI:
+def create_fastapi_app(service: MCPToolService, mcp: FastMCP) -> FastAPI:
+    mcp_http_app = mcp.streamable_http_app()
+
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         app.state.mcp_service = service
-        app.state.mcp_server = create_mcp_server(service)
-        yield
+        app.state.mcp_server = mcp
+        async with mcp.session_manager.run():
+            yield
 
     app = FastAPI(title="AI Work OS MCP Server", lifespan=lifespan)
+    app.mount("/mcp", mcp_http_app)
 
     @app.get("/health")
     async def health() -> dict[str, Any]:
@@ -202,8 +213,8 @@ def build_server_components() -> tuple[InMemoryTaskStore, MCPToolService, FastMC
     settings = get_settings()
     store = InMemoryTaskStore()
     service = MCPToolService(settings=settings, store=store)
-    mcp = create_mcp_server(service)
-    app = create_fastapi_app(service)
+    mcp = create_mcp_server(service, settings)
+    app = create_fastapi_app(service, mcp)
     return store, service, mcp, app
 
 

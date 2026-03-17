@@ -22,6 +22,10 @@ class Settings(BaseSettings):
     marketing_model: str = Field(default="gpt-4.1-mini", alias="AIWORKOS_MARKETING_MODEL")
     coding_model: str = Field(default="gpt-4.1", alias="AIWORKOS_CODING_MODEL")
     log_level: str = Field(default="INFO", alias="AIWORKOS_LOG_LEVEL")
+    mcp_disable_dns_rebinding_protection: bool = Field(
+        default=False,
+        alias="AIWORKOS_MCP_DISABLE_DNS_REBINDING_PROTECTION",
+    )
 
 
 @lru_cache
